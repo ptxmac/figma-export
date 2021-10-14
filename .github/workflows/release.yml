@@ -37,28 +37,28 @@ jobs:
           asset_name: figma-export.zip
           asset_content_type: application/zip
 
-      - name: Install Cocoapods
-        run: gem install cocoapods
+      # - name: Install Cocoapods
+      #   run: gem install cocoapods
 
-      - name: Deploy to Cocoapods
-        run: |
-          set -eo pipefail
-          pod trunk push FigmaExport.podspec
-        env:
-          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+      # - name: Deploy to Cocoapods
+      #   run: |
+      #     set -eo pipefail
+      #     pod trunk push FigmaExport.podspec
+      #   env:
+      #     COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
 
-      - name: Update Homebrew formulae
-        uses: mislav/bump-homebrew-formula-action@v1
-        with:
-          formula-name: figma-export
-          formula-path: figma-export.rb
-          homebrew-tap: RedMadRobot/homebrew-formulae
-          base-branch: master
-          tag-name: ${{ github.event.release.tag_name }}
-          download-url: https://github.com/RedMadRobot/figma-export/releases/download/${{ github.event.release.tag_name }}/figma-export.zip
-          commit-message: |
-            {{formulaName}} {{version}}
+      # - name: Update Homebrew formulae
+      #   uses: mislav/bump-homebrew-formula-action@v1
+      #   with:
+      #     formula-name: figma-export
+      #     formula-path: figma-export.rb
+      #     homebrew-tap: RedMadRobot/homebrew-formulae
+      #     base-branch: master
+      #     tag-name: ${{ github.event.release.tag_name }}
+      #     download-url: https://github.com/RedMadRobot/figma-export/releases/download/${{ github.event.release.tag_name }}/figma-export.zip
+      #     commit-message: |
+      #       {{formulaName}} {{version}}
 
-            Created by https://github.com/mislav/bump-homebrew-formula-action
-        env:
-          COMMITTER_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+      #       Created by https://github.com/mislav/bump-homebrew-formula-action
+      #   env:
+      #     COMMITTER_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
