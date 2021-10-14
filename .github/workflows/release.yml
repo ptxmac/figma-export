@@ -20,7 +20,7 @@ jobs:
         run: |
           swift build -c release --arch arm64 --arch x86_64
           cp ./.build/apple/Products/Release/figma-export ./Release/figma-export
-          zip -r figma-export.zip Release LICENSE
+          zip -r figma-export.zip Release LICENSE FigmaExport.podspec
 
       - name: "Get upload_url"
         run: echo "::set-output name=upload_url::https://uploads.github.com/repos/$GITHUB_REPOSITORY/releases/$(jq --raw-output '.release.id' $GITHUB_EVENT_PATH)/assets{?name,label}"  
