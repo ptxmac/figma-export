@@ -56,6 +56,22 @@ public struct ColorsProcessor: AssetsProcessable {
     }
 }
 
+public struct GradientsProcessor: AssetsProcessable {
+    public typealias AssetType = Gradient
+
+    public let platform: Platform
+    public let nameValidateRegexp: String?
+    public let nameReplaceRegexp: String?
+    public let nameStyle: NameStyle?
+    
+    public init(platform: Platform, nameValidateRegexp: String?, nameReplaceRegexp: String?, nameStyle: NameStyle?) {
+        self.platform = platform
+        self.nameValidateRegexp = nameValidateRegexp
+        self.nameReplaceRegexp = nameReplaceRegexp
+        self.nameStyle = nameStyle
+    }
+}
+
 public struct TypographyProcessor: AssetsProcessable {
     public typealias AssetType = TextStyle
 
