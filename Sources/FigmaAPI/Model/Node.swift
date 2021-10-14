@@ -53,9 +53,14 @@ public struct Paint: Decodable {
     public let type: PaintType
     public let opacity: Double?
     public let color: PaintColor?
+    public let gradientStops: [ColorStop]?
 
     public var asSolid: SolidPaint? {
         return SolidPaint(self)
+    }
+
+    public var asGradient: GradientPaint? {
+        return GradientPaint(self)
     }
 }
 
@@ -81,7 +86,26 @@ public struct SolidPaint: Decodable {
     }
 }
 
+public struct GradientPaint: Decodable {
+    public let gradientStops: [ColorStop]
+
+    public init?(_ paint: Paint) {
+        switch paint.type {
+            case .gradientLinear:
+                guard let stops = paint.gradientStops else {  return nil }
+                self.gradientStops = stops
+            default:
+                return nil
+        }
+    }
+}
+
 public struct PaintColor: Decodable {
     /// Channel value, between 0 and 1
     public let r, g, b, a: Double
+}
+
+public struct ColorStop: Decodable {
+    public let position: Double
+    public let color: PaintColor
 }

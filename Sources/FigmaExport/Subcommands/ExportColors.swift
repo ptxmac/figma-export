@@ -34,13 +34,29 @@ extension FigmaExportCommand {
                     nameReplaceRegexp: options.params.common?.colors?.nameReplaceRegexp,
                     nameStyle: options.params.ios?.colors?.nameStyle
                 )
-                let colorPairs = processor.process(light: colors.light, dark: colors.dark)
+                let colorPairs = processor.process(light: colors.light.colors, dark: colors.dark?.colors)
                 if let warning = colorPairs.warning?.errorDescription {
                     logger.warning("\(warning)")
                 }
 
                 logger.info("Exporting colors to Xcode project...")
                 try exportXcodeColors(colorPairs: colorPairs.get(), iosParams: ios)
+
+                // Gradients
+                // TODO: different options?
+                let gradientsProcessor = GradientsProcessor(
+                    platform: .ios,
+                    nameValidateRegexp: options.params.common?.colors?.nameValidateRegexp,
+                    nameReplaceRegexp: options.params.common?.colors?.nameReplaceRegexp,
+                    nameStyle: options.params.ios?.colors?.nameStyle
+                )
+
+                let gradientPairs = gradientsProcessor.process(light: colors.light.gradients, dark: colors.dark?.gradients)
+                if let warning = gradientPairs.warning?.errorDescription {
+                    logger.warning("\(warning)")
+                }
+                logger.info("Exporting gradients to Xcode project ...")
+                try exportXcodeGradients(gradientPairs: gradientPairs.get(), colorPairs: colorPairs.get(), iosParams: ios)
 
                 checkForUpdate(logger: logger)
                 
@@ -55,7 +71,7 @@ extension FigmaExportCommand {
                     nameReplaceRegexp: options.params.common?.colors?.nameReplaceRegexp,
                     nameStyle: .snakeCase
                 )
-                let colorPairs = processor.process(light: colors.light, dark: colors.dark)
+                let colorPairs = processor.process(light: colors.light.colors, dark: colors.dark?.colors)
                 if let warning = colorPairs.warning?.errorDescription {
                     logger.warning("\(warning)")
                 }
@@ -114,6 +130,40 @@ extension FigmaExportCommand {
                 logger.error("Unable to add some file references to Xcode project")
             }
         }
+
+        private func exportXcodeGradients(gradientPairs: [AssetPair<Gradient>], colorPairs: [AssetPair<Color>], iosParams: Params.iOS) throws {
+            // TODO: change to gradients?
+
+            guard let colorParams = iosParams.colors else {
+                logger.error("Nothing to do. Add ios.colors parameters to the config file.")
+                return
+            }
+
+            let output = XcodeGradientsOutput(
+                assetsInMainBundle: iosParams.xcassetsInMainBundle,
+                assetsInSwiftPackage: iosParams.xcassetsInSwiftPackage,
+                swiftuiGradientSwiftURL: colorParams.swiftuiGradientSwift,
+                groupUsingNamespace: colorParams.groupUsingNamespace
+            )
+
+            let exporter = XcodeGradientExporter(output: output)
+            let files = exporter.export(gradientPairs: gradientPairs, colorPairs: colorPairs)
+
+            try fileWriter.write(files: files)
+
+                        
+            do {
+                let xcodeProject = try XcodeProjectWriter(xcodeProjPath: iosParams.xcodeprojPath, target: iosParams.target)
+                try files.forEach { file in
+                    if file.destination.file.pathExtension == "swift" {
+                        try xcodeProject.addFileReferenceToXcodeProj(file.destination.url)
+                    }
+                }
+                try xcodeProject.save()
+            } catch {
+                logger.error("Unable to add some file references to Xcode project")
+            }
+        }   
 
         private func exportAndroidColors(colorPairs: [AssetPair<Color>], androidParams: Params.Android) throws {
             let exporter = AndroidColorExporter(outputDirectory: androidParams.mainRes)

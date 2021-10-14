@@ -61,6 +61,7 @@ struct Params: Decodable {
 
             let colorSwift: URL?
             let swiftuiColorSwift: URL?
+            let swiftuiGradientSwift: URL?
         }
 
         struct Icons: Decodable {
