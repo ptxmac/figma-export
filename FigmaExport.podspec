@@ -1,8 +1,8 @@
 Pod::Spec.new do |spec|
     spec.name           = "FigmaExport"
-    spec.version        = "0.29.0"
+    spec.version        = "0.30.0-exp"
     spec.summary        = "Command line utility to export colors, typography, icons and images from Figma to Xcode / Android Studio project."
-    spec.homepage       = "https://github.com/RedMadRobot/figma-export"  
+    spec.homepage       = "https://github.com/ptxmac/figma-export"  
     spec.license        = { type: "MIT", file: "LICENSE" }
     spec.author         = { "Daniil Subbotin" => "mail@subdan.ru" }
     spec.source         = { http: "#{spec.homepage}/releases/download/#{spec.version}/figma-export.zip" }
