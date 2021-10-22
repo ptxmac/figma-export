@@ -92,3 +92,8 @@ iOSInjectionProject/
 # Other
 
 .DS_Store
+
+## ptx
+
+ptx-test
+.vscode
